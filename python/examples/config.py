@@ -64,7 +64,7 @@ try: input = raw_input
 except NameError: pass
 
 
-def configure_device(iface='hid', bus=None, device='ecc', i2c_addr=None, keygen=True, **kwargs):
+def configure_device(iface='hid', device='ecc', i2c_addr=None, keygen=True, **kwargs):
     ATCA_SUCCESS = 0x00
 
     # Loading cryptoauthlib(python specific)
@@ -82,8 +82,6 @@ def configure_device(iface='hid', bus=None, device='ecc', i2c_addr=None, keygen=
     # Basic Raspberry Pi I2C check
     if 'i2c' == iface and check_if_rpi():
         cfg.cfg.atcai2c.bus = 1
-    if bus is not None:
-        cfg.cfg.atcai2c.bus = bus
 
     # Initialize the stack
     assert atcab_init(cfg) == ATCA_SUCCESS
@@ -234,7 +232,6 @@ if __name__ == '__main__':
     parser = setup_example_runner(__file__)
     parser.add_argument('--i2c', help='I2C Address (in hex)')
     parser.add_argument('--gen', default=True, help='Generate new keys')
-    parser.add_argument('--bus', help='I2C bus number')
     args = parser.parse_args()
 
     if args.i2c is not None:
@@ -251,5 +248,5 @@ if __name__ == '__main__':
         exit(0)
 
     print('\nConfiguring the device with an example configuration')
-    configure_device(args.iface, int(args.bus) if args.bus is not None else None, args.device, args.i2c, args.gen, **parse_interface_params(args.params))
+    configure_device(args.iface, args.device, args.i2c, args.gen, **parse_interface_params(args.params))
     print('\nDevice Successfully Configured')
